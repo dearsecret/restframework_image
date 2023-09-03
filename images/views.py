@@ -29,6 +29,18 @@ class Mine(APIView):
                 "Authorization": f"Bearer {settings.CF_TOKEN}",
                 "Content-Type": "application/json",
             },
+            # Private mode
+            # json={"requireSignedURLs": "true"},
+        ).json()
+
+        # requests 사용하여 파일 보내기
+        url = res.get("result").get("uploadURL")
+        res = requests.post(
+            url,
+            files={
+                "url": "https://www.mantech.co.kr/wp-content/uploads/2014/01/purple-bg.jpg"
+                # "file": open("mine.jpeg", "rb")
+            },
         ).json()
 
         return Response({"result": f"{res}"})
