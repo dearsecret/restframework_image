@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "20230830"
+name = "20230903"
 version = "0.1.0"
 description = ""
 authors = ["dearsecret <dearsecret1217@gmail.com>"]
@@ -13,6 +13,7 @@ markdown = "^3.4.4"
 django-filter = "^23.2"
 pyjwt = "^2.8.0"
 djangorestframework = "^3.14.0"
+requests = "^2.31.0"
 
 
 [build-system]
