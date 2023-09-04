@@ -21,6 +21,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = env("SECRET_KEY")
 CF_ID = env("CF_ID")
 CF_TOKEN = env("CF_TOKEN")
+CF_KEY = env("CF_KEY")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/

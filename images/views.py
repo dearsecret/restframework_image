@@ -1,13 +1,11 @@
 import requests
-from django.shortcuts import render
 from rest_framework.views import APIView
-from .serializers import MineSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
-from users.serializers import PrivateUserSerializer
 from .models import UserImage
 from config import settings
+from .signature import make_signautre
 
 # Create your views here.
 
@@ -29,11 +27,12 @@ class Mine(APIView):
                 "Authorization": f"Bearer {settings.CF_TOKEN}",
                 "Content-Type": "application/json",
             },
-            # Private mode
-            # json={"requireSignedURLs": "true"},
+            # 1 Private mode
+            json={"requireSignedURLs": "true"},
         ).json()
 
         # requests 사용하여 파일 보내기
+        # frontend에서 사용할 component test
         url = res.get("result").get("uploadURL")
         res = requests.post(
             url,
@@ -41,6 +40,13 @@ class Mine(APIView):
                 "url": "https://www.mantech.co.kr/wp-content/uploads/2014/01/purple-bg.jpg"
                 # "file": open("mine.jpeg", "rb")
             },
+            # 2 Private mode
+            data={
+                "requireSignedURLs": "true",
+            },
         ).json()
+        url = res["result"].get("variants")[0]
 
-        return Response({"result": f"{res}"})
+        # make_signautre(url , minutes)
+        served_private_url = make_signautre(url, 60)
+        return Response({"result": f"{served_private_url}"})
