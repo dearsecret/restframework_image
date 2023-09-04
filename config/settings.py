@@ -23,6 +23,11 @@ CF_ID = env("CF_ID")
 CF_TOKEN = env("CF_TOKEN")
 CF_KEY = env("CF_KEY")
 
+# 문자메시지 서비스 환경변수
+SMS_SERVICE_ID = env("SMS_SERVICE_ID")
+SMS_SECRET_KEY = env("SMS_SECRET_KEY")
+SMS_ACCESS_KEY = env("SMS_ACCESS_KEY")
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -49,6 +54,7 @@ SYSTEM_APP = [
 PROJECT_APP = [
     "users.apps.UsersConfig",
     "common.apps.CommonConfig",
+    "tasks.apps.TasksConfig",
     "images.apps.ImagesConfig",
 ]
 
