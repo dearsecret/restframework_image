@@ -24,6 +24,7 @@ CF_TOKEN = env("CF_TOKEN")
 CF_KEY = env("CF_KEY")
 
 # 문자메시지 서비스 환경변수
+SMS_NUMBER = env("SMS_NUMBER")
 SMS_SERVICE_ID = env("SMS_SERVICE_ID")
 SMS_SECRET_KEY = env("SMS_SECRET_KEY")
 SMS_ACCESS_KEY = env("SMS_ACCESS_KEY")
