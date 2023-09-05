@@ -1,4 +1,8 @@
 import requests
+from django.core.mail import send_mail
+from django.utils.html import strip_tags
+from django.template.loader import render_to_string
+from config import settings
 from .signature import sms
 
 
@@ -10,3 +14,25 @@ def send_sms(to: str, content: str):
             res.raise_for_status()
         except Exception as e:
             print(e)
+
+
+def send_email(to: str, subject: str, template_name: str, **context):
+    # verify.html examples
+    # context = {
+    #     "title" : title,
+    #     "subtitle" : subtitle,
+    #     "content" : RandomNumber,
+    #     "anotation" : "blabla",
+    # }
+    try:
+        html_msg = render_to_string(template_name=template_name, context=context)
+        plain_txt = strip_tags(html_msg)
+        send_mail(
+            subject,
+            plain_txt,
+            settings.DEFAULT_FROM_EMAIL,
+            [to],
+            html_message=html_msg,
+        )
+    except Exception as e:
+        print(e)
