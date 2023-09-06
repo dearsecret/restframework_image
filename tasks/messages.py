@@ -13,10 +13,12 @@ def send_sms(to: str, content: str):
             res = requests.post(**sms(to, content))
             res.raise_for_status()
         except Exception as e:
-            print(e)
+            content = f"{e}"
+        # finally :
+        #     SMSMessage.objects.create(to=to, content=content)
 
 
-def send_email(to: str, subject: str, template_name: str, **context):
+def send_email(to: list, subject: str, template_name: str, **context):
     # verify.html examples
     # context = {
     #     "title" : title,
@@ -31,8 +33,12 @@ def send_email(to: str, subject: str, template_name: str, **context):
             subject,
             plain_txt,
             settings.DEFAULT_FROM_EMAIL,
-            [to],
+            to,
             html_message=html_msg,
         )
     except Exception as e:
-        print(e)
+        plain_txt = f"{e}"
+
+    # finally :
+    #     for user in to :
+    #         Mail.objects.create(to=user, subject=subject, content=plain_txt)

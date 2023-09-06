@@ -118,6 +118,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
         "config.authentication.JWTauthetication",
+        "config.authentication.FirebaseAuthentication",
     ]
 }
 
