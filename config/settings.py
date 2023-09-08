@@ -29,11 +29,15 @@ SMS_SERVICE_ID = env("SMS_SERVICE_ID")
 SMS_SECRET_KEY = env("SMS_SECRET_KEY")
 SMS_ACCESS_KEY = env("SMS_ACCESS_KEY")
 
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = "587"
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = env("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_USE_SSL = True
+
+# EMAIL_HOST = "smtp.gmail.com"
+# EMAIL_PORT = "587"
+# EMAIL_USE_TLS = True
+# DEFAULT_FROM_EMAIL = env("EMAIL_HOST_USER")
+# EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -118,7 +122,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
         "config.authentication.JWTauthetication",
-        "config.authentication.FirebaseAuthentication",
+        # "config.authentication.FirebaseAuthentication",
     ]
 }
 
