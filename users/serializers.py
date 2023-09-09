@@ -31,3 +31,9 @@ class VerifySerializer(serializers.Serializer):
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError("이미 존재하는 아이디 입니다.")
         return value
+
+
+class PublicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("pk",)

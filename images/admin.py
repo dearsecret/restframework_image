@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import UserImage
+from .signature import make_signature
 
 # Register your models here.
 
@@ -8,9 +9,8 @@ from .models import UserImage
 @admin.register(UserImage)
 class UserImageAdmin(admin.ModelAdmin):
     list_display = (
-        "image_tag",
         "user",
-        "url",
+        "created_at",
     )
 
     fieldsets = (
@@ -28,6 +28,8 @@ class UserImageAdmin(admin.ModelAdmin):
     )
 
     def image_tag(self, obj):
-        return format_html('<img src="{}" width=200 height=80/>'.format(obj.url))
+        return format_html(
+            '<img src="{}" width="250"/">'.format(make_signature(obj.url))
+        )
 
     image_tag.short_description = "Image"

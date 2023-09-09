@@ -12,15 +12,13 @@ from config import settings
 # browser TTL 은 미설정
 
 
-def make_signautre(url: str, exp: int = 60):
+def make_signature(url: str, exp: int = 60):
     exp = int(datetime.now().timestamp() + exp)
     string_to_sign = urlparse(url).path + f"?exp={exp}"
-
     sig = hmac.new(
         bytes(settings.CF_KEY, "utf-8"),
         msg=bytes(string_to_sign, "utf-8"),
         digestmod=hashlib.sha256,
     ).hexdigest()
     url = url + f"?exp={exp}&sig={sig}"
-    print(url)
     return url

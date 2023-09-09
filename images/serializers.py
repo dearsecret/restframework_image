@@ -1,14 +1,14 @@
 from rest_framework.serializers import ModelSerializer
 from .models import UserImage
-from users.serializers import PrivateUserSerializer
+from users.serializers import PublicSerializer
 
 
-class MineSerializer(ModelSerializer):
-    user = PrivateUserSerializer()
+class PhotoSerializer(ModelSerializer):
+    # user = PublicSerializer(read_only=True)
 
     class Meta:
         model = UserImage
         fields = (
-            "user",
+            "pk",
             "url",
         )
