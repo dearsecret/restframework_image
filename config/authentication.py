@@ -12,7 +12,7 @@ from users.models import User
 
 class JWTauthetication(BaseAuthentication):
     def authenticate(self, request):
-        token = request.data.get("Jwt")
+        token = request.data.get("jwt")
 
         if not token:
             return None

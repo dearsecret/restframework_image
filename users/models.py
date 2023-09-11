@@ -2,14 +2,17 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinLengthValidator
 from common.models import CommonModel
+from uuid import uuid4
 
 # Create your models here.
 
 
 class User(AbstractUser):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+
     class Discrimination(models.TextChoices):
-        STUDENT = ("STUDENT", "student")
-        TEACHER = ("TEACHER", "teacher")
+        STUDENT = ("female", "여성")
+        TEACHER = ("male", "남성")
 
     name = models.CharField(
         max_length=10, null=True, validators=[MinLengthValidator(3)]

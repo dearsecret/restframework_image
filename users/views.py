@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from .models import User
 from .serializers import VerifySerializer
 from tasks.models import Number, VerifyNumber
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 
 # from tasks.models import VerifyNumber
 
@@ -66,6 +67,6 @@ class JWTLogin(APIView):
 
         if user:
             token = jwt.encode({"pk": user.pk}, settings.SECRET_KEY, algorithm="HS256")
-            return Response({"token": token})
+            return Response({"token": token}, status=HTTP_200_OK)
         else:
-            return Response({"error": "check password"})
+            return Response({"error": "check password"}, status=HTTP_400_BAD_REQUEST)
