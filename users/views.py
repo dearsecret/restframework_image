@@ -1,11 +1,12 @@
 import jwt
 from config import settings
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from rest_framework.views import APIView
-from rest_framework.exceptions import ParseError
+from rest_framework.exceptions import ParseError, AuthenticationFailed
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from .models import User
-from .serializers import VerifySerializer
+from .serializers import VerifySerializer, PublicSerializer, PrivateSerializer
 from tasks.models import Number, VerifyNumber
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 
@@ -55,18 +56,53 @@ class JWTLogin(APIView):
     def post(self, request):
         username = request.data.get("username")
         password = request.data.get("password")
-
         if not username or not password:
             raise ParseError
 
-        user = authenticate(
-            request,
-            username=username,
-            password=password,
-        )
-
+        user = authenticate(request, username=username, password=password)
         if user:
-            token = jwt.encode({"pk": user.pk}, settings.SECRET_KEY, algorithm="HS256")
+            token = jwt.encode(
+                {"pk": f"{user.pk}"}, settings.SECRET_KEY, algorithm="HS256"
+            )
             return Response({"token": token}, status=HTTP_200_OK)
         else:
             return Response({"error": "check password"}, status=HTTP_400_BAD_REQUEST)
+
+    # def put(self, request):
+    #     username = request.data.get("username")
+    #     password = request.data.get("password")
+
+    #     user, created = User.objects.get_or_create(username=username)
+    #     print(user)
+    #     if not created:
+    #         user.set_password(password)
+    #         user.save()
+    #         token = jwt.encode(
+    #             {"pk": f"{user.pk}"}, settings.SECRET_KEY, algorithm="HS256"
+    #         )
+    #         return Response({"token": token}, status=HTTP_200_OK)
+    #     else:
+    #         raise AuthenticationFailed()
+
+
+class Profile(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            serializer = PublicSerializer(request.user)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response("fail!")
+        return Response(status=HTTP_200_OK)
+
+
+class Thumbnail(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = PrivateSerializer(request.user)
+        if serializer.is_valid():
+            return Response(serializer.data)
+        else:
+            return Response({"error": "존재하지 않습니다"}, status=HTTP_400_BAD_REQUEST)

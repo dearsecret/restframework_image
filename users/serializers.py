@@ -1,6 +1,7 @@
 import re
 from rest_framework import serializers
 from .models import User
+from images.serializers import PhotoSerializer
 
 
 class VerifySerializer(serializers.Serializer):
@@ -36,4 +37,20 @@ class VerifySerializer(serializers.Serializer):
 class PublicSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("pk",)
+        fields = (
+            "pk",
+            "username",
+            "name",
+        )
+
+
+class PrivateSerializer(serializers.ModelSerializer):
+    photos = PhotoSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = User
+        fields = (
+            "pk",
+            "username",
+            "photos",
+        )

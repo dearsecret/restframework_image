@@ -8,7 +8,9 @@ from uuid import uuid4
 
 
 class User(AbstractUser):
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    id = models.UUIDField(
+        primary_key=True, default=uuid4, editable=False, max_length=150
+    )
 
     class Discrimination(models.TextChoices):
         STUDENT = ("female", "여성")
@@ -22,7 +24,7 @@ class User(AbstractUser):
     discrimination = models.CharField(choices=Discrimination.choices, max_length=13)
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.id}"
 
 
 class Profile(CommonModel):
