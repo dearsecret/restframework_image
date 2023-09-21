@@ -1,86 +1,45 @@
-import requests
+from django.db.transaction import atomic
 from rest_framework.views import APIView
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
+from rest_framework.exceptions import ParseError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from config import settings
-from .serializers import PhotoSerializer
-
-# Create your views here.
+from .upload import get_links
+from .models import UserImage
 
 
 class ImageUpload(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        # upload image link 생성
-        url = f"https://api.cloudflare.com/client/v4/accounts/{settings.CF_ID}/images/v1/direct_upload"
-        res = requests.post(
-            url,
-            headers={
-                "Authorization": f"Bearer {settings.CF_TOKEN}",
-                "Content-Type": "application/json",
-            },
-            # 1 Private mode
-            json={"requireSignedURLs": "true"},
-        )
-        if res.status_code == 200:
-            url = res.json().get("result").get("uploadURL")
-            return Response({"uploadUrl": f"{url}"})
+        try:
+            cnt = request.data.get("cnt")
+            assert type(cnt) is int, "type validate"
+        except Exception as e:
+            raise ParseError({"error": "올바르지 않은 입력값"})
+
+        if cnt > 0:
+            url_links = get_links(cnt)
+            return Response({"uploadUrl": url_links}, status=HTTP_200_OK)
         else:
-            return Response({"error": "잠시 후 다시 시도해주세요"})
+            return Response({"error": "type error"}, status=HTTP_400_BAD_REQUEST)
 
     def put(self, request):
-        print(request.data)
-        serializer = PhotoSerializer(data=request.data)
-        if serializer.is_valid():
-            photo = serializer.save()
-            # photo = serializer.save(user=request.user)
-            serializer = PhotoSerializer(photo)
-            return Response(serializer.data)
-        return Response({"error": "잠시 후 다시 시도해주세요."})
+        data = request.data.get("data")
+        if not data:
+            raise ParseError()
 
-        # http.post().then(res => {
-        # http.post(res.uploadUrl, headers: {"content":"multipart/form-data", body: ~~~})})
+        try:
+            with atomic():
+                for key in data:
+                    if not str(data[key]).startswith(
+                        "https://imagedelivery.net/J9h5bfi5i6mCYIcaebsRcw/"
+                    ):
+                        raise ParseError()
 
-
-# from rest_framework.exceptions import NotFound, NotAuthenticated
-# from .models import UserImage
-# from .signature import make_signature
-# class ImageTest(APIView):
-#     def post(self, request):
-#         # upload image link 생성
-#         url = f"https://api.cloudflare.com/client/v4/accounts/{settings.CF_ID}/images/v1/direct_upload"
-#         res = requests.post(
-#             url,
-#             headers={
-#                 "Authorization": f"Bearer {settings.CF_TOKEN}",
-#                 "Content-Type": "application/json",
-#             },
-#             # 1 Private mode
-#             json={"requireSignedURLs": "true"},
-#         )
-#         if res.status_code == 200:
-#             url = res.json().get("result").get("uploadURL")
-#         print(url)
-
-#         res = requests.post(
-#             url,
-#             files={
-#                 # "url": "IMAGEURL"
-#                 # "file": open("mine.jpeg", "rb")
-#             },
-#             # 2 Private mode
-#             data={
-#                 "requireSignedURLs": "true",
-#             },
-#         ).json()
-#         url = res["result"].get("variants")
-#         print
-#         try:
-#             from .models import UserImage
-
-#             UserImage.objects.create(url=url[0], user=request.user)
-#             UserImage.objects.create(url=url[1], user=request.user)
-#             return Response({"success": "good"})
-#         except Exception as e:
-#             return Response({"error": "잠시 후 다시 시도해주세요."})
+                    UserImage.objects.create(
+                        index=key, url=data[key], user=request.user
+                    )
+            return Response({"success": "confirm frontend"})
+        except Exception as e:
+            return Response({"error": "needs to confirm your data"})

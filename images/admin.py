@@ -11,25 +11,38 @@ class UserImageAdmin(admin.ModelAdmin):
     list_display = (
         "user",
         "created_at",
+        "status",
     )
 
     fieldsets = (
         (
-            "fields",
+            "기본정보",
             {
-                "fields": ["user", "url", "image_tag"],
+                "fields": ["user", "url", "index", "image_tag"],
+            },
+        ),
+        (
+            "평가",
+            {
+                "fields": [
+                    "status",
+                ],
             },
         ),
     )
 
     readonly_fields = (
-        "image_tag",
+        "user",
         "url",
+        "index",
+        "image_tag",
     )
 
     def image_tag(self, obj):
-        return format_html(
-            '<img src="{}" width="250"/">'.format(make_signature(obj.url))
-        )
+        if obj.url:
+            return format_html(
+                '<img src="{}" width="250"/">'.format(make_signature(obj.url))
+            )
+        return None
 
     image_tag.short_description = "Image"

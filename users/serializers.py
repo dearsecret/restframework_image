@@ -1,6 +1,6 @@
 import re
 from rest_framework import serializers
-from .models import User
+from .models import User, Usage
 from images.serializers import PhotoSerializer
 
 
@@ -35,22 +35,34 @@ class VerifySerializer(serializers.Serializer):
 
 
 class PublicSerializer(serializers.ModelSerializer):
+    point = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = User
         fields = (
             "pk",
-            "username",
             "name",
+            "point",
         )
+
+    def get_point(self, obj):
+        return obj.point()
 
 
 class PrivateSerializer(serializers.ModelSerializer):
-    photos = PhotoSerializer(read_only=True, many=True)
+    photos = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = (
-            "pk",
             "username",
             "photos",
         )
+
+    def get_photos(self, user):
+        from images.signature import make_signature
+
+        return [
+            make_signature(photo.url, 60 * 60 * 24 * 7)
+            for photo in user.photos.filter(status=True)
+        ]

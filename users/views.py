@@ -93,16 +93,12 @@ class Profile(APIView):
             serializer = PublicSerializer(request.user)
             return Response(serializer.data)
         except Exception as e:
-            return Response("fail!")
-        return Response(status=HTTP_200_OK)
+            return Response("fail!", status=HTTP_400_BAD_REQUEST)
 
 
-class Thumbnail(APIView):
+class PrivateProfile(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = PrivateSerializer(request.user)
-        if serializer.is_valid():
-            return Response(serializer.data)
-        else:
-            return Response({"error": "존재하지 않습니다"}, status=HTTP_400_BAD_REQUEST)
+        return Response(serializer.data, status=HTTP_200_OK)

@@ -15,15 +15,18 @@ class JWTauthetication(BaseAuthentication):
         token = request.headers.get("Authorization")
         if not token:
             return None
-        decoded = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-        pk = decoded.get("pk")
-        if not pk:
-            raise AuthenticationFailed("No Permission")
         try:
-            user = User.objects.get(pk=pk)
-            return (user, None)
-        except User.DoesNotExist:
-            raise AuthenticationFailed("Not found")
+            decoded = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+            pk = decoded.get("pk")
+            if not pk:
+                raise AuthenticationFailed("No Permission")
+            try:
+                user = User.objects.get(pk=pk)
+                return (user, None)
+            except User.DoesNotExist:
+                raise AuthenticationFailed("Not found")
+        except Exception as e:
+            raise AuthenticationFailed("not found pk")
 
 
 # if not firebase_admin._apps:
