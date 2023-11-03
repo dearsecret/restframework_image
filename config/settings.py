@@ -67,6 +67,9 @@ PROJECT_APP = [
     "common.apps.CommonConfig",
     "tasks.apps.TasksConfig",
     "images.apps.ImagesConfig",
+    "chats.apps.ChatsConfig",
+    "favorites.apps.FavoritesConfig",
+    "meetings.apps.MeetingsConfig",
 ]
 
 THIRD_PARTY = [
@@ -175,12 +178,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "users.User"
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:58106",
+    "http://127.0.0.1",
     "http://127.0.0.1:8000",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:58106",
+    "http://127.0.0.1",
     "http://127.0.0.1:8000",
 ]
 

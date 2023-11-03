@@ -20,12 +20,14 @@ class User(AbstractUser):
     name = models.CharField(
         max_length=10, null=True, validators=[MinLengthValidator(3)]
     )
+
+    gender = models.BooleanField(default=False)
     first_name = models.CharField(editable=False, max_length=13)
     last_name = models.CharField(editable=False, max_length=13)
     discrimination = models.CharField(choices=Discrimination.choices, max_length=13)
 
     def __str__(self):
-        return f"{self.username}"
+        return f"{self.pk}"
 
     def point(self):
         return self.points.all().aggregate(total=Sum("usage"))["total"]

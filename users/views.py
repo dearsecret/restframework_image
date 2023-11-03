@@ -9,6 +9,7 @@ from .models import User
 from .serializers import VerifySerializer, PublicSerializer, PrivateSerializer
 from tasks.models import Number, VerifyNumber
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
+from config.firebase import make_custom_token
 
 # from tasks.models import VerifyNumber
 
@@ -58,13 +59,15 @@ class JWTLogin(APIView):
         password = request.data.get("password")
         if not username or not password:
             raise ParseError
-
         user = authenticate(request, username=username, password=password)
         if user:
             token = jwt.encode(
                 {"pk": f"{user.pk}"}, settings.SECRET_KEY, algorithm="HS256"
             )
-            return Response({"token": token}, status=HTTP_200_OK)
+            return Response(
+                {"token": token, "fire_token": make_custom_token(str(user.pk))},
+                status=HTTP_200_OK,
+            )
         else:
             return Response({"error": "check password"}, status=HTTP_400_BAD_REQUEST)
 

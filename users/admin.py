@@ -7,6 +7,7 @@ from .models import User, Profile, Usage
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = (
+        "pk",
         "username",
         "last_login",
         "get_point",

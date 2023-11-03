@@ -1,7 +1,6 @@
 import re
 from rest_framework import serializers
-from .models import User, Usage
-from images.serializers import PhotoSerializer
+from .models import User
 
 
 class VerifySerializer(serializers.Serializer):
@@ -66,3 +65,28 @@ class PrivateSerializer(serializers.ModelSerializer):
             make_signature(photo.url, 60 * 60 * 24 * 7)
             for photo in user.photos.filter(status=True)
         ]
+
+
+class GenderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("gender",)
+
+
+class PublicUserSerializer(serializers.ModelSerializer):
+    is_owner = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+
+        fields = (
+            "is_owner",
+            "discrimination",
+        )
+
+    def get_is_owner(self, model):
+        request = self.context["request"]
+        if request and (request.user == model):
+            return True
+        else:
+            return False

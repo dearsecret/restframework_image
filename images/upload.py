@@ -14,12 +14,12 @@ def get_link():
             "Authorization": f"Bearer {settings.CF_TOKEN}",
             "Content-Type": "application/json",
         },
-        # 1 Private mode
-        json={"requireSignedURLs": "true"},
+        data={"requireSignedURLs": "true"},
     )
+    print(res.text)
     if res.status_code == 200:
-        link = res.json().get("result").get("uploadURL")
-        return link
+        link = res.json().get("result")
+        return link.get("uploadURL")
 
 
 async def get_urls(cnt):
@@ -34,3 +34,17 @@ async def get_urls(cnt):
 def get_links(cnt: int = 1):
     result = asyncio.run(get_urls(cnt))
     return result
+
+
+def check_status(id):
+    url = (
+        f"https://api.cloudflare.com/client/v4/accounts/{settings.CF_ID}/images/v1/{id}"
+    )
+    res = requests.post(
+        url,
+        headers={
+            "Authorization": f"Bearer {settings.CF_TOKEN}",
+            "Content-Type": "application/json",
+        },
+    )
+    return res

@@ -23,4 +23,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/users/", include("users.urls")),
     path("api/v1/images/", include("images.urls")),
+    path("api/v1/chats/", include("chats.urls")),
+    path("api/v1/favorites/", include("favorites.urls")),
+    path("api/v1/meetings/", include("meetings.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
