@@ -70,11 +70,14 @@ PROJECT_APP = [
     "chats.apps.ChatsConfig",
     "favorites.apps.FavoritesConfig",
     "meetings.apps.MeetingsConfig",
+    "payments.apps.PaymentsConfig",
+    "services.apps.ServicesConfig",
 ]
 
 THIRD_PARTY = [
     "corsheaders",
     "rest_framework",
+    "graphene_django",
 ]
 
 INSTALLED_APPS = SYSTEM_APP + PROJECT_APP + THIRD_PARTY

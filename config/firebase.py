@@ -25,6 +25,7 @@ initialize_app(
 
 def send_to_database(ref: str, data: dict):
     # changeListenr 처리
+    # TODO : TRY && EXCEPT 구문
     db.reference(ref).set(data)
 
 

@@ -8,7 +8,10 @@ class Meeting(models.Model):
     content = models.CharField(max_length=1000)
     invisible = models.BooleanField(default=False)
     photo = models.URLField()
-    descriptions = models.ManyToManyField("users.User", related_name="descriptions")
+    # descriptions = models.ManyToManyField("users.User", related_name="descriptions")
+    descriptions = models.ManyToManyField(
+        "payments.Payment", related_name="meetings", blank=True
+    )
     user = models.ForeignKey(
         "users.User",
         related_name="meetings",

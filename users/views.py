@@ -1,15 +1,23 @@
 import jwt
 from config import settings
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate
 from rest_framework.views import APIView
-from rest_framework.exceptions import ParseError, AuthenticationFailed
+from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .models import User
-from .serializers import VerifySerializer, PublicSerializer, PrivateSerializer
+from .models import User, Profile
+from .serializers import (
+    VerifySerializer,
+    PublicSerializer,
+    PrivateSerializer,
+    MeSerializer,
+    PrivateProfileSerializer,
+    ProfileDetailSerializer,
+)
 from tasks.models import Number, VerifyNumber
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from config.firebase import make_custom_token
+import datetime
 
 # from tasks.models import VerifyNumber
 
@@ -88,15 +96,15 @@ class JWTLogin(APIView):
     #         raise AuthenticationFailed()
 
 
-class Profile(APIView):
-    permission_classes = [IsAuthenticated]
+# class Profile(APIView):
+#     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
-        try:
-            serializer = PublicSerializer(request.user)
-            return Response(serializer.data)
-        except Exception as e:
-            return Response("fail!", status=HTTP_400_BAD_REQUEST)
+#     def post(self, request):
+#         try:
+#             serializer = PublicSerializer(request.user)
+#             return Response(serializer.data)
+#         except Exception as e:
+#             return Response("fail!", status=HTTP_400_BAD_REQUEST)
 
 
 class PrivateProfile(APIView):
@@ -105,3 +113,59 @@ class PrivateProfile(APIView):
     def post(self, request):
         serializer = PrivateSerializer(request.user)
         return Response(serializer.data, status=HTTP_200_OK)
+
+
+class Me(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = MeSerializer(request.user)
+        return Response(serializer.data)
+
+    # now = timezone.localtime(timezone.now())
+    #     if now.hour >= 12:
+    #         noon = now.replace(hour=12, minute=0, second=0, microsecond=0)
+    #         # today_list= something.objects.filter(created_at__gte= noon).all()
+    #         # serializer
+    #         return Response()
+    #     else:
+    #         yesterday = timezone.localtime(
+    #             timezone.now() - timezone.timedelta(days=1)
+    #         ).replace(hour=12, minute=0, second=0, microsecond=0)
+    #         # today_list= somthing.objects.filter(created_at__gte=yesterday).all()
+    #         # serializer
+    #         return Response()
+
+    # def post(self ,request)
+
+
+from .serializers import PrivateDetailSerializer
+
+
+class ProfileList(APIView):
+    def get(self, request):
+        obj = {}
+        obj["school"] = Profile.School.labels
+        obj["weight"] = Profile.Weight.labels
+        obj["drive"] = Profile.Drive.labels
+        obj["policy"] = Profile.Policy.labels
+        obj["religion"] = Profile.Religion.labels
+        obj["drink"] = Profile.Drink.labels
+        obj["smoke"] = Profile.Smoke.labels
+        return Response(obj)
+
+
+    def post(self, request):
+        profile = Profile.objects.get(user=request.user)
+        serializer = PrivateProfileSerializer(
+            profile,
+            data=request.data,
+            partial=True,
+        )
+
+        if serializer.is_valid():
+            profile = serializer.save(user=request.user)
+            serializer = PrivateProfileSerializer(profile)
+            print(serializer.data)
+            return Response(serializer.data)
+        return Response(status=HTTP_400_BAD_REQUEST)

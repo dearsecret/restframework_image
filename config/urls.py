@@ -26,4 +26,5 @@ urlpatterns = [
     path("api/v1/chats/", include("chats.urls")),
     path("api/v1/favorites/", include("favorites.urls")),
     path("api/v1/meetings/", include("meetings.urls")),
+    path("api/v1/services/", include("services.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -18,7 +18,7 @@ class UserImageAdmin(admin.ModelAdmin):
         (
             "기본정보",
             {
-                "fields": ["user", "url", "index", "image_tag"],
+                "fields": ["user", "url", "index"],
             },
         ),
         (
@@ -31,18 +31,18 @@ class UserImageAdmin(admin.ModelAdmin):
         ),
     )
 
-    readonly_fields = (
-        "user",
-        "url",
-        "index",
-        "image_tag",
-    )
+    # readonly_fields = (
+    #     "user",
+    #     "url",
+    #     "index",
+    #     "image_tag",
+    # )
 
-    def image_tag(self, obj):
-        if obj.url:
-            return format_html(
-                '<img src="{}" width="250"/">'.format(make_signature(obj.url))
-            )
-        return None
+    # def image_tag(self, obj):
+    #     if obj.url:
+    #         return format_html(
+    #             '<img src="{}" width="250"/">'.format(make_signature(obj.url))
+    #         )
+    #     return None
 
-    image_tag.short_description = "Image"
+    # image_tag.short_description = "Image"

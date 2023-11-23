@@ -11,35 +11,41 @@ from .models import UserImage
 class ImageUpload(APIView):
     permission_classes = [IsAuthenticated]
 
+    def get_count(self ,cnt):
+        try :
+            return int(cnt)
+        except ValueError:
+            raise ParseError
+
+    def get(self ,request, cnt):
+        cnt = self.get_count(cnt)
+        print(cnt)
+        if cnt <=6 and cnt>0:
+            links = get_links(cnt)
+            print(links)
+            return Response({"uploadUrl": links})
+        return Response()
+
     def post(self, request):
-        try:
-            cnt = request.data.get("cnt")
-            assert type(cnt) is int, "type validate"
-        except Exception as e:
-            raise ParseError({"error": "올바르지 않은 입력값"})
+        print(request.user)
+        print(request.data)
+        return Response({"fucker": "success"})
 
-        if cnt > 0:
-            url_links = get_links(cnt)
-            return Response({"uploadUrl": url_links}, status=HTTP_200_OK)
-        else:
-            return Response({"error": "type error"}, status=HTTP_400_BAD_REQUEST)
+    # def put(self, request):
+    #     data = request.data.get("data")
+    #     if not data:
+    #         raise ParseError()
+    #     try:
+    #         with atomic():
+    #             for key in data:
+    #                 if not str(data[key]).startswith(
+    #                     "https://imagedelivery.net/J9h5bfi5i6mCYIcaebsRcw/"
+    #                 ):
+    #                     raise ParseError()
 
-    def put(self, request):
-        data = request.data.get("data")
-        if not data:
-            raise ParseError()
-
-        try:
-            with atomic():
-                for key in data:
-                    if not str(data[key]).startswith(
-                        "https://imagedelivery.net/J9h5bfi5i6mCYIcaebsRcw/"
-                    ):
-                        raise ParseError()
-
-                    UserImage.objects.create(
-                        index=key, url=data[key], user=request.user
-                    )
-            return Response({"success": "confirm frontend"})
-        except Exception as e:
-            return Response({"error": "needs to confirm your data"})
+    #                 UserImage.objects.create(
+    #                     index=key, url=data[key], user=request.user
+    #                 )
+    #         return Response({"success": "confirm frontend"})
+    #     except Exception as e:
+    #         return Response({"error": "needs to confirm your data"})

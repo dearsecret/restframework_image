@@ -1,6 +1,15 @@
 {
+  "python.defaultInterpreterPath": "/Users/dongsoo/flutter_ui/20230903/.venv",
+  "python.terminal.activateEnvironment": true,
+  "python.formatting.provider": "black",
+  "python.formatting.blackPath": "/usr/local/bin/black",
+  "python.formatting.blackArg": ["--max-line-length:200"],
   "[python]": {
-    "editor.defaultFormatter": "ms-python.black-formatter"
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.wordWrapColumn": 200,
+    "editor.formatOnSave": true,
+    "editor.rulers": [200]
   },
-  "python.formatting.provider": "black"
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": true
 }

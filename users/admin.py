@@ -10,19 +10,12 @@ class UserAdmin(admin.ModelAdmin):
         "pk",
         "username",
         "last_login",
-        "get_point",
     )
-
-    def get_point(self, obj):
-        return obj.point()
 
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = (
-        "user",
-        "phone_number",
-    )
+    list_display = ("user",)
 
 
 @admin.register(Usage)
